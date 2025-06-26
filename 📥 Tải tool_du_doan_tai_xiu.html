@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tool Dự Đoán Tài Xỉu</title>
+    <style>
+        body { font-family: Arial; padding: 40px; background: #f4f4f4; }
+        input, button { font-size: 16px; }
+        .container { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 600px; margin: auto; }
+        h2 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>🔮 Tool Dự Đoán Tài Xỉu Dựa Trên Lịch Sử</h2>
+    <p>Nhập kết quả gần nhất (Tài/Xỉu), cách nhau bằng dấu phẩy (,) — Ví dụ: <code>Tài,Xỉu,Xỉu,Tài,Tài</code></p>
+    <input type="text" id="history" placeholder="Nhập lịch sử tài xỉu..." style="width: 80%; padding: 8px;" />
+    <button onclick="predict()" style="padding: 8px 16px; margin-left: 8px;">Dự Đoán</button>
+    <div id="result" style="margin-top: 20px; font-weight: bold;"></div>
+</div>
+
+<script>
+function predict() {
+    const input = document.getElementById('history').value.trim();
+    if (!input) {
+        document.getElementById('result').innerHTML = "⚠️ Vui lòng nhập lịch sử kết quả!";
+        return;
+    }
+    const results = input.split(',').map(x => x.trim().toLowerCase());
+    const counts = { 'tài': 0, 'xỉu': 0 };
+    for (let i = 0; i < results.length; i++) {
+        if (results[i] === 'tài') counts['tài']++;
+        else if (results[i] === 'xỉu') counts['xỉu']++;
+    }
+    let prediction = '';
+    let percentage = 50;
+    if (results.length >= 3) {
+        const last3 = results.slice(-3);
+        if (last3.every(x => x === 'tài')) {
+            prediction = 'Xỉu';
+            percentage = 65;
+        } else if (last3.every(x => x === 'xỉu')) {
+            prediction = 'Tài';
+            percentage = 65;
+        } else if (counts['tài'] > counts['xỉu']) {
+            prediction = 'Xỉu';
+            percentage = 55;
+        } else {
+            prediction = 'Tài';
+            percentage = 55;
+        }
+    } else {
+        prediction = 'Tài';
+        percentage = 50;
+    }
+
+    document.getElementById('result').innerHTML = `📊 Dự đoán: <span style="color: blue;">${prediction.toUpperCase()}</span> (${percentage}%)`;
+}
+</script>
+</body>
+</html>
